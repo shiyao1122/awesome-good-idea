@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 变革：组织级 AI vs 个人级 AI</title>
+    <style>
+        /* 高级暗黑科技主题配色 */
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-panel: #171717;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --accent-red: #ef4444;
+            --accent-green: #22c55e;
+            --border-color: #334155;
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow: hidden; /* 隐藏原生滚动条 */
+            touch-action: none; /* 禁用默认的页面滚动行为 */
+        }
+
+        /* 幻灯片容器与平滑过渡 */
+        .slide-container {
+            height: 100vh; width: 100%;
+            transition: transform 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+
+        .slide {
+            height: 100vh; width: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 40px 6vw; box-sizing: border-box;
+            position: relative;
+        }
+
+        /* 桌面端排版样式 */
+        h1 { font-size: 3.5rem; margin-bottom: 10px; text-align: center; font-weight: 800; letter-spacing: -0.02em; }
+        h2 { font-size: 2.2rem; margin-bottom: 30px; color: var(--accent-orange); font-weight: 700; width: 100%; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;}
+        p { font-size: 1.2rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 15px; margin-top: 0;}
+        ul { font-size: 1.2rem; line-height: 1.8; color: var(--text-main); padding-left: 20px; margin: 10px 0;}
+        li { margin-bottom: 12px; }
+        li span { color: var(--accent-blue); font-weight: bold; }
+        
+        .highlight { background: rgba(59, 130, 246, 0.2); padding: 2px 8px; border-radius: 4px; color: var(--accent-blue); }
+        .danger { background: rgba(239, 68, 68, 0.2); padding: 2px 8px; border-radius: 4px; color: var(--accent-red); }
+
+        /* 布局：左右分栏 */
+        .split-layout {
+            display: flex; flex-direction: row; gap: 50px; width: 100%; max-width: 1400px;
+            align-items: center; justify-content: space-between;
+        }
+        .text-content { flex: 1.2; display: flex; flex-direction: column; gap: 10px; }
+        .visual-content { flex: 1; display: flex; flex-direction: column; gap: 15px; align-items: center; justify-content: center; width: 100%;}
+
+        /* 对比卡片 */
+        .vs-box { background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-top: 15px;}
+        .vs-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; font-size: 1.1rem; }
+        
+        /* 图片样式 */
+        img { max-width: 100%; max-height: 38vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #fff; padding: 4px;}
+        .img-caption { font-size: 0.9rem; color: var(--text-muted); text-align: center; margin-top: 5px; font-style: italic;}
+
+        /* 导航提示与进度条 */
+        .progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent-blue); transition: width 0.3s; z-index: 1000; }
+        .nav-hint { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); font-size: 0.9rem; color: #64748b; animation: pulse 2s infinite; text-align: center; width: 100%;}
+        
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+        /* 表格样式 */
+        .table-container { width: 100%; display: flex; justify-content: center; }
+        table { width: 100%; max-width: 1200px; border-collapse: collapse; margin-top: 20px; font-size: 1.15rem; background: var(--bg-panel); border-radius: 12px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--accent-orange); font-weight: bold; background: rgba(249, 115, 22, 0.1); }
+        tr:last-child td { border-bottom: none; }
+
+        /* =========================================================
+           移动端适配 (响应式)
+           ========================================================= */
+        @media (max-width: 768px) {
+            .slide { padding: 15px 5vw; justify-content: center; }
+            .split-layout { flex-direction: column; gap: 15px; }
+            h1 { font-size: 2rem; margin-bottom: 5px; }
+            h2 { font-size: 1.4rem; margin-bottom: 10px; padding-bottom: 8px;}
+            p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 5px;}
+            ul { font-size: 0.95rem; line-height: 1.5; padding-left: 18px; margin: 5px 0;}
+            li { margin-bottom: 6px; }
+            .highlight, .danger { padding: 1px 4px; }
+            .text-content { gap: 5px; }
+            .vs-box { padding: 12px; margin-top: 8px; }
+            .vs-row { font-size: 1rem; margin-bottom: 5px; }
+            .vs-box p { font-size: 0.85rem !important; }
+            .visual-content { gap: 10px; }
+            img { max-height: 22vh; }
+            .img-caption { font-size: 0.8rem; margin-top: 0; line-height: 1.2; }
+            .multi-img { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; }
+            .multi-img img { max-height: 12vh; width: 45%; }
+            .multi-img .img-caption { width: 100%; }
+            .slide > div > p.cover-quote { font-size: 1.1rem !important; padding: 15px !important; margin: 0 !important;}
+            .action-box { padding: 25px 20px !important; }
+            .action-box h1 { font-size: 2rem !important; margin-bottom: 10px !important; }
+            .action-box p { font-size: 1rem !important; }
+            .unprompted-text { font-size: 2.5rem !important; }
+            .outcome-boxes { flex-direction: column; gap: 15px !important; }
+            .outcome-boxes .vs-box { padding: 15px !important; }
+            .outcome-boxes h3 { font-size: 1.3rem !important; margin-bottom: 10px;}
+            .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; border-radius: 8px; }
+            table { min-width: 650px; font-size: 0.9rem; margin-top: 10px; }
+            th, td { padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-bar" id="progressBar"></div>
+
+    <div class="slide-container" id="container">
+        
+        <!-- Slide 1: Cover -->
+        <section class="slide">
+            <h3 style="color: var(--accent-blue); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; font-size: 1rem;">a16z 万字研报深度解析</h3>
+            <h1>组织级 AI <span style="color: var(--text-muted); font-weight: 300;">vs</span> 个人级 AI</h1>
+            <div style="background: var(--bg-panel); border-left: 4px solid var(--accent-orange); padding: 30px; margin-top: 20px; max-width: 800px;">
+                <p class="cover-quote" style="font-size: 1.6rem; color: var(--text-main); font-style: italic;">
+                    “AI 让每个员工的效率提升了 10 倍。<br>但为什么至今没有哪家公司，因此实现了 10 倍的整体业绩增长？”
+                </p>
+            </div>
+            <p style="margin-top: 30px; font-size: 1rem;">主讲：解析当前企业 AI 转型的最大误区 <br> 🖱️ 滑动 / 滚轮 / 键盘上下键翻页</p>
+            <div class="nav-hint">上滑阅读 ↓</div>
+        </section>
+
+        <!-- Slide 2: 历史隐喻 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>生产力悖论：历史上最昂贵的教训</h2>
+                    <p>当今企业的困境，在 130 年前曾真实上演：</p>
+                    <ul>
+                        <li><span style="color:var(--text-muted)">1890年代：</span>纺织厂引入了最先进的电动机替换蒸汽机，但接下来的30年，<strong>工厂总产量几乎没有增长</strong>。</li>
+                        <li><span class="danger">失败原因：</span>仅仅换了动力源，但依然沿用围绕老旧蒸汽机设计的传动轴和厂房架构。</li>
+                        <li><span>1920年代：</span>引入流水线，彻底打破旧框架，<strong>重构了整个工厂车间</strong>，生产力才迎来大爆发。</li>
+                    </ul>
+                    <div class="vs-box">
+                        <p style="margin:0; color:var(--text-main);">💡 <strong>今天的启示：</strong> 给每个员工发一个 ChatGPT 账号，仅仅等于“换了马达”。企业真正需要的是<strong>“重构流水线”</strong>。</p>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/a75cb99d-c7e6-4985-8471-8637e26be818_1600x527.png" alt="Textile Mills Evolution">
+                    <div class="img-caption">图：从蒸汽驱动，到简单电力替代，再到彻底的流水线重构</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 3: 核心差异 1 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 1：一盘散沙 vs 步调一致</h2>
+                    <p>盲目增加高产出的个体，如果不加管理，只会让组织陷入混乱。</p>
+                    <div class="vs-box">
+                        <div class="vs-row">
+                            <span style="color: var(--accent-red);">❌ 个人级 AI：局部优化的陷阱 (制造混乱)</span>
+                        </div>
+                        <p style="font-size: 1rem;">员工用各自的提示词和习惯处理工作，产出互不相通，形成无数个“信息孤岛”，反而增加了团队沟通与核对的成本（组织熵增）。</p>
+                        
+                        <div class="vs-row" style="margin-top: 15px;">
+                            <span style="color: var(--accent-green);">✅ 组织级 AI：系统性协同 (步调一致)</span>
+                        </div>
+                        <p style="font-size: 1rem;">建立 AI 时代的“代理管理学”。让所有的 AI 员工 (Agent) 共享统一的底层数据、公司目标和工作流，力往一处使。</p>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/5ce3ae1e-b73a-4ea5-8d31-3f6d2e4e07a3_693x318.png" alt="Coordination chaos">
+                    <div class="img-caption">图：各自为战反而抵消力量(红) vs 统一方向产生合力(绿)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 4: 核心差异 2 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 2：制造噪音 vs 提取信号</h2>
+                    <p>当 AI 零成本生成完美内容时，人类的“审核算力”被彻底击穿了。</p>
+                    <ul>
+                        <li><span class="danger">个人工具的副作用：</span> 员工每天能轻松生成 50 份精美的报告，导致企业内部被海量的 <strong>“AI 废话与噪音”</strong> 淹没。</li>
+                        <li><span>组织的真正痛点：</span> 企业不缺内容，缺的是如何在成百上千份包装完美的信息中，<strong>沙里淘金，找到真正有价值的商业信号</strong>。</li>
+                    </ul>
+                    <p>组织级 AI 必须扮演<strong>漏斗与过滤器</strong>的角色，用严格的规则校验点（Checkpoints）来过滤机器生成的海量内容。</p>
+                </div>
+                <div class="visual-content multi-img">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/ce9fe424-d114-4c64-8a6c-842cbe178695_1280x540.png" alt="AI Slop">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/d6185636-5d04-4280-90af-f9cffe02512a_1600x964.png" alt="Matrix Tool">
+                    <div class="img-caption">图：呈指数级增长的垃圾信息 vs 用于筛选验证的矩阵节点</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 5: 核心差异 3 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 3：盲目讨好 vs 捍卫客观事实</h2>
+                    <p>当前的通用大模型（如 ChatGPT）经过了人类偏好的微调，变得极度“讨好”用户。</p>
+                    <ul>
+                        <li><span class="danger">迎合偏见：</span> 员工哪怕提出一个错误的直觉，AI 也会迎合说：“您的想法太棒了！”。这会加剧公司内部的信息茧房与部门分歧。</li>
+                        <li><span>建立客观：</span> 企业运作需要严谨的“投委会”和“风控审查”。组织级 AI 必须敢做 <strong>“Say No 的人”</strong>，基于事实数据进行客观对抗。</li>
+                    </ul>
+                    <div class="vs-box">
+                        <p style="margin:0;">企业级应用必须拒绝盲盒式的聊天框，而是将业务拆解为<strong>可追溯、具有明确规则的确定性工作流</strong>。</p>
+                    </div>
+                </div>
+                <div class="visual-content multi-img">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/e80be9ff-d60b-481e-beb1-c67a21373657_679x385.png" alt="Echo chambers">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/614cec1d-5396-4e2d-8d1e-2b361089377c_1121x521.png" alt="Objectivity">
+                    <div class="img-caption">图：AI迎合导致的偏见分化 vs 组织机制带来的客观收敛</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 6: 核心差异 4 & 5 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 4 & 5：深耕垂直优势与直接交付结果</h2>
+                    
+                    <p><span class="highlight">差异 4：泛泛而谈 vs 特定优势 (垂直纵深)</span></p>
+                    <p style="margin-top:5px;">通用大模型试图讨好所有人。但在金融、医疗等严肃商业领域，**哪怕 1% 的微小专属优势**，也能转化为巨大的市场利润。深度永远打败广度。</p>
+
+                    <p style="margin-top: 15px;"><span class="highlight">差异 5：省时间 vs 创造营收 (商业结果)</span></p>
+                    <ul>
+                        <li><span class="danger">个人 AI 优化成本：</span> 帮员工更快地写代码、写总结（省的是时间）。</li>
+                        <li><span style="color:var(--accent-green)">组织 AI 驱动增长：</span> 主动在十万条枯燥的历史数据中，挖掘出那个被遗漏的大客户（直接创造收入）。</li>
+                    </ul>
+                </div>
+                <div class="visual-content multi-img">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/ded32c3a-fff1-43eb-9036-bc7082c37452_694x328.png" alt="Specific Edge">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/088ab11b-90a9-4ddd-b51b-2fc507f0ec94_1600x778.png" alt="Solution Layer">
+                    <div class="img-caption">图：建立垂直领域的长板 / 商业价值正向“交付最终业务结果”转移</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 7: 核心差异 6 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 6：提供裸工具 vs 替你重构流程</h2>
+                    <p>引入 AI 最大的挑战往往不是技术本身，而是人类天生抗拒改变的<strong>习惯惯性</strong>。</p>
+                    <div class="vs-box">
+                        <div class="vs-row">
+                            <span style="color: var(--accent-red);">❌ 个人级：只发账号，指望员工自己学</span>
+                        </div>
+                        <p>给全体发账号，指望大家自己摸索怎么写提示词 (Prompt)。结果通常是：极少数人在用，大部分人因为觉得麻烦而将其搁置。</p>
+                        
+                        <div class="vs-row" style="margin-top: 15px;">
+                            <span style="color: var(--accent-green);">✅ 组织级：不卖工具，卖业务重构</span>
+                        </div>
+                        <p>这本质上是<strong>“流程工程”</strong>。服务商必须深入客户的业务线，把公司原有的优秀操作规范 (SOP)，直接固化进自动化 AI 流程中，降低使用门槛。</p>
+                    </div>
+                </div>
+                <div class="visual-content multi-img">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/7a48c219-8440-4f27-a8eb-8c84778ac8df_687x332.png" alt="Adoption curves">
+                    <img src="https://substack-post-media.s3.amazonaws.com/public/images/5ab6c54d-9dd4-4dfb-bb5e-ed952e5137fa_709x305.png" alt="Chasms of adoption">
+                    <div class="img-caption">图：越是高管，离底层工具越远。必须靠流程重构来跨越“技术采用鸿沟”。</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 8: 核心差异 7 -->
+        <section class="slide">
+            <div class="split-layout">
+                <div class="text-content">
+                    <h2>核心差异 7：被动问答 vs 全天候主动出击</h2>
+                    <p>还在等人类输入“提示词”才干活？这就像把先进的电动机绑在落后的手动织布机上。</p>
+                    <ul>
+                        <li><span class="danger">人类提问的局限：</span> 最大的效率瓶颈在于，员工往往不知道该问 AI 什么，也不知道危机什么时候会发生。</li>
+                        <li><span>交互范式反转：</span> 未来的企业 AI 是 7x24 小时在后台默默运行的。</li>
+                    </ul>
+                    <p>在海量数据中发现资金链异常的瞬间，<strong>AI 会在你打开电脑前，主动向你发送预警并给出多套备选方案。</strong></p>
+                    
+                    <div class="vs-box" style="border-color: var(--accent-orange); background: rgba(249, 115, 22, 0.05);">
+                        <p style="margin:0; text-align:center; color: var(--accent-orange); font-weight: bold;">
+                            "AI 能提供的最高价值，是主动去做那些『老板都没想起来要安排』的工作。"
+                        </p>
+                    </div>
+                </div>
+                <div class="visual-content">
+                    <h1 class="unprompted-text" style="font-size: 3.5rem; color: var(--border-color); margin: 0; line-height: 1.2;">UNPROMPTED</h1>
+                    <h1 class="unprompted-text" style="font-size: 3.5rem; color: var(--accent-blue); margin: 0; line-height: 1.2;">AUTONOMY</h1>
+                    <div class="img-caption" style="margin-top: 15px;">摆脱被动 Prompt 的束缚，实现后台数据的自动化监控与出击</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Slide 9: 核心矩阵总结 -->
+        <section class="slide" style="justify-content: flex-start; padding-top: 60px;">
+            <h2 style="text-align: center; border-bottom: none; margin-bottom: 10px;">企业 AI 护城河：7大核心维度总结</h2>
+            <p style="text-align: center; font-size: 0.85rem; color: var(--text-muted);">(手机端可向右滑动表格查看完整对比)</p>
+            <div class="table-container">
+                <table>
+                    <tr>
+                        <th width="15%">关键评估维度</th>
+                        <th width="42%" style="color: var(--accent-red);">❌ 个人级 AI (低价值区)</th>
+                        <th width="43%" style="color: var(--accent-blue);">✅ 组织级 AI (核心护城河)</th>
+                    </tr>
+                    <tr>
+                        <td><strong>1. 团队协同</strong></td>
+                        <td>制造信息孤岛与沟通混乱</td>
+                        <td>建立系统级规范，实现步调一致</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. 信息处理</strong></td>
+                        <td>低成本制造海量冗余垃圾</td>
+                        <td>如漏斗般过滤并提取高价值信号</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. 决策认知</strong></td>
+                        <td>讨好人类直觉，滋生业务偏见</td>
+                        <td>引入交叉审计，捍卫客观事实</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. 竞争优势</strong></td>
+                        <td>过度追求大而全的泛用能力</td>
+                        <td>深耕特定领域的专属长板 (Edge)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. 交付结果</strong></td>
+                        <td>帮员工省时间，仅仅是降本增效</td>
+                        <td>直击业务痛点，扩展直接商业营收</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6. 落地方式</strong></td>
+                        <td>提供裸工具，导致极高的弃用率</td>
+                        <td>不卖工具卖方案，直接重构业务流</td>
+                    </tr>
+                    <tr>
+                        <td><strong>7. 交互范式</strong></td>
+                        <td>不拨不转，被动响应人类的指令</td>
+                        <td>全天候后台监控，风险来临前主动预警</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- Slide 10: 结语 -->
+        <section class="slide">
+            <div class="action-box" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); padding: 50px 80px; border-radius: 16px; text-align: center; max-width: 900px; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+                <h2 style="border: none; margin-bottom: 10px; color: var(--text-muted);">变革行动纲领</h2>
+                <h1 style="font-size: 3rem; background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px;">
+                    Redesign the Factory.
+                </h1>
+                <p style="font-size: 1.2rem; color: var(--text-main); line-height: 1.6;">
+                    停止“只给员工发软件账号就能躺赢”的幻想。<br><br>
+                    未来商战的真正赢家，是那些懂得将 <strong>垂直行业经验</strong> 与 <strong>确定性 AI 工作流</strong> 深度融合，彻底重塑内部组织架构的企业。
+                </p>
+                <div class="highlight" style="display: inline-block; margin-top: 30px; padding: 10px 20px; font-size: 1.1rem; border: 1px solid var(--accent-blue);">
+                    ⚡ 我们已经拥有了属于这个时代的“电力”，现在，去重构你的“工厂”吧。
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        let currentSlide = 0;
+        let isAnimating = false;
+
+        function updateProgress() {
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        function goToSlide(index) {
+            if (isAnimating || index < 0 || index >= slides.length) return;
+            isAnimating = true;
+            currentSlide = index;
+            
+            // 执行平滑垂直滑动
+            container.style.transform = `translateY(-${currentSlide * 100}vh)`;
+            updateProgress();
+            
+            // 锁定动画时间，防止连滚
+            setTimeout(() => { isAnimating = false; }, 600); 
+        }
+
+        // 鼠标滚轮监听 (防抖处理)
+        window.addEventListener('wheel', (e) => {
+            if (isAnimating) return;
+            if (e.deltaY > 50) {
+                goToSlide(currentSlide + 1);
+            } else if (e.deltaY < -50) {
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // 键盘导航监听
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+                e.preventDefault();
+                goToSlide(currentSlide + 1);
+            }
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // 移动端触摸防误触逻辑 (区分横滑表格与竖滑翻页)
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        window.addEventListener('touchstart', e => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: false });
+
+        window.addEventListener('touchmove', e => {
+            // 阻止默认滚动，防止页面产生橡皮筋效果
+            if(e.target.closest('.table-container')) {
+                // 如果在表格区域，允许原生横向滚动，不阻止
+            } else {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchend', e => {
+            if (isAnimating) return;
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // 防误触：如果横向滑动的幅度大于纵向，说明用户可能在滑动表格，此时不翻页
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                return;
+            }
+
+            // 纵向滑动判断
+            if (diffY > 40) {
+                goToSlide(currentSlide + 1);
+            } else if (diffY < -40) {
+                goToSlide(currentSlide - 1);
+            }
+        });
+
+        // 初始化
+        updateProgress();
+    </script>
+</body>
+</html>
