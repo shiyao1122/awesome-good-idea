@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>项目经理圆桌分享会</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+      line-height: 1.7;
+    }
+    .deck {
+      width: 100%;
+      padding: 48px 24px 80px;
+    }
+    .slide {
+      width: min(1100px, 100%);
+      margin: 0 auto 28px;
+      background: #fff;
+      border-radius: 24px;
+      padding: 42px 46px;
+      box-shadow: 0 18px 60px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .cover {
+      background: linear-gradient(135deg, #111827 0%, #1f3a8a 55%, #2563eb 100%);
+      color: #fff;
+      padding: 56px 46px;
+    }
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      font-size: 13px;
+      letter-spacing: .4px;
+      margin-bottom: 18px;
+    }
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      font-size: 40px;
+      line-height: 1.18;
+      margin-bottom: 16px;
+    }
+    .subtitle {
+      font-size: 18px;
+      color: rgba(255,255,255,0.88);
+      max-width: 760px;
+    }
+    .meta {
+      margin-top: 28px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.72);
+    }
+    .slide-title {
+      font-size: 30px;
+      line-height: 1.25;
+      margin-bottom: 18px;
+      color: #111827;
+    }
+    .lead {
+      font-size: 18px;
+      color: #374151;
+      margin-bottom: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 22px;
+      margin-top: 18px;
+    }
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 20px 22px;
+    }
+    .card h3 {
+      font-size: 17px;
+      margin-bottom: 12px;
+      color: #111827;
+    }
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    li { margin: 8px 0; }
+    .quote {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #eff6ff, #eef2ff);
+      border-left: 5px solid #2563eb;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e3a8a;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .tag {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .closing {
+      background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
+      color: #fff;
+    }
+    .closing .slide-title, .closing h3 { color: #fff; }
+    .closing .lead, .closing li { color: rgba(255,255,255,.9); }
+    .closing .quote {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-left-color: #93c5fd;
+    }
+    .footer-note {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+    @media (max-width: 860px) {
+      .slide { padding: 28px 22px; border-radius: 18px; }
+      h1 { font-size: 30px; }
+      .slide-title { font-size: 24px; }
+      .grid, .two-col { grid-template-columns: 1fr; }
+      .deck { padding: 20px 12px 48px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck">
+    <section class="slide cover">
+      <div class="eyebrow">项目经理圆桌分享会</div>
+      <h1>兼职项目经理的 4 个实战难题：<br>稳盘、对齐、取舍、担责</h1>
+      <p class="subtitle">给产品 / 开发 / 测试兼任 PM 的一线经验版分享。少一点教科书，多一点真现场。</p>
+      <div class="meta">2026-04-02 · 轻观点 / 偏实战 / 适合圆桌发言</div>
+    </section>
+
+    <section class="slide">
+      <h2 class="slide-title">01｜很多公司的 PM，不是岗位，而是一种能力组合</h2>
+      <p class="lead">在我们公司，PM 往往不是一个标准化专岗，很多时候是产品、开发、测试在本职岗位之外，再额外承担一部分项目推进职责。</p>
+      <div class="two-col">
+        <div class="card">
+          <h3>今天不讲标准 PM 教科书</h3>
+          <ul>
+            <li>不卷流程定义</li>
+            <li>不讲过于理想化的方法论</li>
+            <li>重点讲真实项目里最容易卡住的 4 个场景</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>今天更想聊的是</h3>
+          <ul>
+            <li>人突然走了，项目怎么稳</li>
+            <li>跨部门总返工，怎么对齐</li>
+            <li>快上线了又加需求，怎么取舍</li>
+            <li>工期被压，怎么沟通、怎么扛</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">项目管理不只是排期和跟进，更重要的是在不确定里把事接住。</div>
+    </section>
+
+    <section class="slide">
+      <h2 class="slide-title">02｜产品突发离职：先保不断档，再追求最优解</h2>
+      <p class="lead">真实场景：产品经理离职后，一个月内没有及时补位，但项目已在开发中、并且临近上线。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>当时怎么稳住</h3>
+          <ul>
+            <li>先确认代理 owner，而不是先纠结谁最专业</li>
+            <li>很多时候不是 1 个人补位，而是项目经理 + 主程开发联合补位</li>
+            <li>文档已定义清楚的，按原计划推进</li>
+            <li>文档未定义 / 优先级不清的，统一上收给产品 leader 拍板</li>
+            <li>创新型、探索型需求先不做，先保当前版本上线</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>最难的不是当前版本</h3>
+          <ul>
+            <li>当前版本很多事情还能靠惯性推进</li>
+            <li>真正头疼的是 roadmap 断了</li>
+            <li>团队会开始迷茫：后面到底做什么？</li>
+            <li>这时不如把窗口期转成技术债治理期</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tag-row">
+        <span class="tag">老代码重构</span>
+        <span class="tag">性能提升</span>
+        <span class="tag">文档补齐</span>
+        <span class="tag">历史 Bug 清理</span>
+      </div>
+      <div class="quote">关键项目一定要有代理 owner。真正危险的，不是有人离开，而是项目只依赖一个人。</div>
+    </section>
+
+    <section class="slide">
+      <h2 class="slide-title">03｜跨部门返工：问题常不在态度，而在对齐颗粒度</h2>
+      <p class="lead">高发场景通常是中台产品经理和业务产品经理先完成对齐，但真正落地的是两边研发和测试，所以问题常在联调 / 提测阶段才爆出来。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>为什么会返工</h3>
+          <ul>
+            <li>前期只停留在文字层面对齐</li>
+            <li>像必传项、字段、状态流转等细节没有真正落到接口定义里</li>
+            <li>大家都觉得自己懂了，但理解未必一致</li>
+            <li>验收口径不统一，最后测试阶段容易炸</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>更实用的做法</h3>
+          <ul>
+            <li>主程开发最好从需求一开始沟通时就参与</li>
+            <li>产品经理对齐的是文字，研发对齐的是协议</li>
+            <li>测试在需求初稿阶段就提前粗评</li>
+            <li>联调前必须有 checklist，把边界和责任写清楚</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">不要只对齐文档，要对齐接口、边界和验收。</div>
+    </section>
+
+    <section class="slide">
+      <h2 class="slide-title">04｜收尾阶段临时加需求：先看用户价值，再看风险评估</h2>
+      <p class="lead">最典型的情况是：快上线了，领导临时提一个交互改动。这个时候最难的，往往不是需求本身，而是谁提的，直接决定了它的权重。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>我的判断顺序</h3>
+          <ul>
+            <li>先看用户价值：不做会不会明显影响用户</li>
+            <li>再看风险评估：设计改动链路、测试影响、上线稳定性</li>
+            <li>最后准备话术：带着方案去沟通，不是情绪化拍脑袋</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>两种典型处理</h3>
+          <ul>
+            <li><strong>风险高：</strong>汇报“当前版本上线弊大于利”，提高后续版本优先级，用更完整方案承接</li>
+            <li><strong>决定接：</strong>拍板的人就要站出来做第一责任人，延期或事故都要扛</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">收尾阶段最难的不是拒绝需求，而是敢为取舍负责。</div>
+    </section>
+
+    <section class="slide">
+      <h2 class="slide-title">05｜工期压缩：别只传递压力，要把混乱变成选择题</h2>
+      <p class="lead">高发场景是节前上线。业务希望节前完成上线，并预留观察窗口，避免假期里突然出异常无人处理。deadline 往往是硬约束，但团队的压力也会同步拉满。</p>
+      <div class="grid">
+        <div class="card">
+          <h3>团队真实感受</h3>
+          <ul>
+            <li>表面会答应，心里通常并不舒服</li>
+            <li>高压、加班、节奏被打乱</li>
+            <li>如果需求都没捋清楚就开始排期，情绪会更差</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>项目经理真正该做的</h3>
+          <ul>
+            <li>先做取舍，而不是先催进度</li>
+            <li>明确哪些必须保、哪些可以砍、哪些可以降级</li>
+            <li>向上给方案，向下给明确优先级</li>
+            <li>不要把没想清楚的压力原样甩给团队</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">工期压缩时，项目经理的价值，不是帮忙传话，而是帮团队把混乱变成选择题。</div>
+    </section>
+
+    <section class="slide closing">
+      <h2 class="slide-title">06｜收尾：先有责，再有权</h2>
+      <p class="lead">很多人做项目时会卡在一个点：我没有权力决定优先级、决定砍什么、决定做不做。但很多事情，往往不是先有权，再有责；而是先敢担责，领导才会慢慢把权给你。</p>
+      <div class="two-col">
+        <div class="card" style="background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18);">
+          <h3>项目管理的高杠杆能力</h3>
+          <ul>
+            <li>把模糊变清楚</li>
+            <li>把分歧变取舍</li>
+            <li>把风险变方案</li>
+            <li>把压力变行动</li>
+          </ul>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18);">
+          <h3>送给兼职 PM 的一句话</h3>
+          <ul>
+            <li>AI Coding、AI Design 越来越强</li>
+            <li>我们会越来越需要高杠杆能力</li>
+            <li>而项目经理，恰好就是很好的成长路径</li>
+            <li>既然大家已经开始兼任 PM，其实已经跨出第一步了</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote">祝大家拥有更多 skill，也拥有更强的扛事能力。</div>
+    </section>
+  </div>
+</body>
+</html>
