@@ -1,4 +1,4 @@
-# awesome-good-idea
+# SHIYAO WORKSPACE
 
 [组织级 AI vs 个人级 AI](https://shiyao1122.github.io/awesome-good-idea/institutional-ai-vs-individual-ai-v2.html)
 
