@@ -1,0 +1,1689 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HitPaw Online 后端架构与承载能力评估</title>
+  <style>
+    :root {
+      --text: #111827;
+      --muted: #4b5563;
+      --line: #d1d5db;
+      --dark: #111827;
+      --orange: #f59e0b;
+      --orange-2: #fff7ed;
+      --green: #16a34a;
+      --green-2: #f0fdf4;
+      --blue: #2563eb;
+      --blue-2: #eff6ff;
+      --purple: #7e22ce;
+      --purple-2: #f3e8ff;
+      --red: #dc2626;
+      --red-2: #fee2e2;
+      --yellow: #d97706;
+      --yellow-2: #fef3c7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px;
+      background: #f3f4f6;
+      color: var(--text);
+      font-family: Arial, "Microsoft YaHei", sans-serif;
+    }
+
+    .page {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      margin: 0 0 8px;
+      text-align: center;
+      font-size: 30px;
+    }
+
+    .page-subtitle {
+      margin: 0 0 28px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 0 26px;
+    }
+
+    .report-meta span {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      background: #fff;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .part-title {
+      margin: 34px 0 16px;
+      padding: 13px 18px;
+      border-left: 8px solid var(--dark);
+      border-radius: 12px;
+      background: #111827;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+
+    .diagram {
+      margin-bottom: 32px;
+      padding: 24px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .diagram h2 {
+      margin: 0 0 22px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .diagram.current {
+      border-color: var(--orange);
+      background: linear-gradient(180deg, #fff 0%, var(--orange-2) 100%);
+    }
+
+    .diagram.target {
+      border-color: var(--green);
+      background: linear-gradient(180deg, #fff 0%, var(--green-2) 100%);
+    }
+
+    .arrow-label,
+    .section-title {
+      width: fit-content;
+      margin: 16px auto;
+      padding: 7px 18px;
+      border-radius: 999px;
+      background: var(--dark);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .section-title {
+      margin-top: 0;
+    }
+
+    .node {
+      border: 1.7px solid var(--line);
+      border-radius: 14px;
+      padding: 14px 10px;
+      text-align: center;
+      background: #fff;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .node strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .node small {
+      display: block;
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f9fafb;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .content-section {
+      margin-bottom: 32px;
+      padding: 24px;
+      border: 2px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
+    }
+
+    .content-section h2 {
+      margin: 0 0 18px;
+      text-align: center;
+      font-size: 24px;
+    }
+
+    .content-section h3 {
+      margin: 18px 0 10px;
+      font-size: 18px;
+    }
+
+    .content-section p {
+      margin: 8px 0;
+      line-height: 1.7;
+      color: #1f2937;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .summary-card {
+      border: 1.6px solid var(--line);
+      border-left: 8px solid var(--blue);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      line-height: 1.55;
+    }
+
+    .summary-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .deployment-facts {
+      margin-bottom: 18px;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .summary-card ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+      line-height: 1.65;
+    }
+
+    .summary-card li {
+      margin: 3px 0;
+    }
+
+    .summary-card.warning {
+      border-left-color: var(--yellow);
+      background: #fffbeb;
+    }
+
+    .summary-card.danger {
+      border-left-color: var(--red);
+      background: #fff1f2;
+    }
+
+    .summary-card.success {
+      border-left-color: var(--green);
+      background: #f0fdf4;
+    }
+
+    .bullet-list {
+      margin: 8px 0 0;
+      padding-left: 22px;
+      line-height: 1.7;
+    }
+
+    .bullet-list li {
+      margin: 4px 0;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 12px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    .data-table th,
+    .data-table td {
+      border: 1px solid #e5e7eb;
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    .data-table th {
+      background: #f9fafb;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .data-table code {
+      padding: 2px 5px;
+      border-radius: 5px;
+      background: #f3f4f6;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 12px;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #d1d5db;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #f9fafb;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .note-box {
+      margin-top: 14px;
+      padding: 14px;
+      border: 1.6px solid var(--yellow);
+      border-radius: 12px;
+      background: var(--yellow-2);
+      line-height: 1.7;
+      font-weight: 700;
+    }
+
+    .flow-diagram {
+      border: 2px solid var(--blue);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+      padding: 20px;
+    }
+
+    .mermaid-box {
+      border: 2px solid var(--blue);
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .mermaid-box .mermaid {
+      margin: 0;
+      min-width: 980px;
+      text-align: center;
+    }
+
+    .flow-lane {
+      margin-bottom: 18px;
+      padding: 16px;
+      border: 1.8px solid #bfdbfe;
+      border-radius: 16px;
+      background: #ffffff;
+    }
+
+    .flow-lane:last-child {
+      margin-bottom: 0;
+    }
+
+    .flow-lane-title {
+      margin-bottom: 12px;
+      text-align: center;
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .flow-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 92px;
+      border: 1.6px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      line-height: 1.4;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .flow-step small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .flow-step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      top: 50%;
+      right: -18px;
+      transform: translateY(-50%);
+      color: var(--dark);
+      font-weight: 900;
+      font-size: 18px;
+      z-index: 2;
+    }
+
+    .flow-step.entry {
+      border-color: var(--purple);
+      background: var(--purple-2);
+    }
+
+    .flow-step.backend {
+      border-color: var(--orange);
+      background: #ffedd5;
+    }
+
+    .flow-step.queue {
+      border-color: var(--yellow);
+      background: var(--yellow-2);
+    }
+
+    .flow-step.external {
+      border-color: #6b7280;
+      border-style: dashed;
+      background: #fff;
+    }
+
+    .flow-step.state {
+      border-color: var(--blue);
+      background: var(--blue-2);
+    }
+
+    .flow-step.risk {
+      border-color: var(--red);
+      background: var(--red-2);
+      color: #7f1d1d;
+    }
+
+    .deployment-grid {
+      display: grid;
+      grid-template-columns: 0.75fr 1.6fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .external-box,
+    .core-box {
+      border: 2px solid #333;
+      border-radius: 16px;
+      background: #fff;
+      padding: 18px;
+    }
+
+    .external-box {
+      border-style: dashed;
+    }
+
+    .external-stack {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .external-stack .node {
+      border-color: #666;
+      border-style: dashed;
+    }
+
+    .entry-box {
+      max-width: 520px;
+      margin: 0 auto 18px;
+      border: 1.8px solid var(--purple);
+      border-radius: 14px;
+      background: var(--purple-2);
+      padding: 16px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .region-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .region-box {
+      border: 2px solid #76a9d8;
+      border-radius: 16px;
+      background: #eaf3ff;
+      padding: 16px;
+    }
+
+    .region-title,
+    .box-title {
+      margin-bottom: 14px;
+      text-align: center;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .app-node {
+      border-color: var(--orange);
+      background: #ffedd5;
+      margin-bottom: 14px;
+    }
+
+    .middleware-box {
+      border: 1.6px solid var(--blue);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .middleware-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .middleware-grid.one {
+      grid-template-columns: 1fr;
+    }
+
+    .middleware-grid .node {
+      border-color: var(--blue);
+      background: var(--blue-2);
+    }
+
+    .cross-note-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .cross-note {
+      border: 1.6px dashed var(--red);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fff1f2;
+      color: #991b1b;
+      text-align: center;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .business-row,
+    .runtime-row,
+    .debt-grid,
+    .shared-core,
+    .biz-layer,
+    .platform-grid,
+    .pressure-grid,
+    .domain-grid,
+    .risk-grid,
+    .target-grid,
+    .region-grid,
+    .cross-grid,
+    .auth-flow,
+    .mw-box {
+      display: grid;
+      gap: 12px;
+    }
+
+    .business-row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .business {
+      min-height: 108px;
+      border: 1.8px solid var(--purple);
+      border-radius: 14px;
+      background: var(--purple-2);
+      padding: 14px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .business strong {
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .business small {
+      color: var(--muted);
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .business span {
+      display: inline-block;
+      margin: 0 auto;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #c084fc;
+      color: #581c87;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .backend-box {
+      border: 2px solid var(--orange);
+      border-radius: 18px;
+      background: #fffaf0;
+      padding: 18px;
+    }
+
+    .backend-title,
+    .platform-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .runtime-row {
+      grid-template-columns: repeat(5, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .runtime {
+      border: 1.5px solid #f97316;
+      border-radius: 12px;
+      background: #ffedd5;
+      padding: 12px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .debt-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .debt-block,
+    .platform-card {
+      border: 1.8px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .debt-block {
+      min-height: 210px;
+      border-left: 8px solid var(--yellow);
+    }
+
+    .debt-block.hot {
+      border-left-color: var(--red);
+      background: #fff1f2;
+    }
+
+    .debt-block.danger {
+      border-left-color: #7f1d1d;
+      background: var(--red-2);
+    }
+
+    .debt-title,
+    .card-title {
+      text-align: center;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .debt-block span,
+    .platform-card span {
+      display: block;
+      margin: 8px 0;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .shared-core {
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 16px;
+    }
+
+    .shared-core div {
+      border: 1.5px solid var(--blue);
+      border-radius: 12px;
+      background: var(--blue-2);
+      padding: 12px;
+      text-align: center;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .biz-layer {
+      grid-template-columns: repeat(4, 1fr);
+      border: 2px solid var(--green);
+      border-radius: 18px;
+      background: #ecfdf5;
+      padding: 16px;
+    }
+
+    .biz-service {
+      min-height: 88px;
+      border: 1.7px solid var(--green);
+      border-radius: 14px;
+      background: #fff;
+      text-align: center;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .biz-service strong {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .biz-service small {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .platform-box {
+      border: 2px solid var(--blue);
+      border-radius: 18px;
+      background: var(--blue-2);
+      padding: 18px;
+    }
+
+    .platform-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .platform-card {
+      min-height: 235px;
+    }
+
+    .platform-card.task {
+      border-left: 8px solid var(--red);
+    }
+
+    .platform-card.provider {
+      border-left: 8px solid var(--blue);
+    }
+
+    .platform-card.file {
+      border-left: 8px solid var(--yellow);
+    }
+
+    .platform-card.obs {
+      border-left: 8px solid var(--green);
+    }
+
+    .api-box,
+    .queue-box,
+    .task-platform-box {
+      width: 620px;
+      margin: 0 auto;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      border: 1.8px solid var(--blue);
+      background: var(--blue-2);
+    }
+
+    .api-box strong,
+    .queue-box strong,
+    .task-platform-box strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .api-box small,
+    .queue-box small,
+    .task-platform-box small {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .queue-box {
+      border-color: var(--yellow);
+      background: var(--yellow-2);
+    }
+
+    .target-api {
+      border-color: var(--green);
+      background: #dcfce7;
+    }
+
+    .task-platform-box {
+      border-color: var(--purple);
+      background: var(--purple-2);
+    }
+
+    .worker-box {
+      border: 2px solid var(--orange);
+      border-radius: 18px;
+      background: #fffaf0;
+      padding: 18px;
+    }
+
+    .worker-title {
+      text-align: center;
+      font-size: 19px;
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+
+    .pressure-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .domain-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pressure-card,
+    .domain-worker {
+      min-height: 128px;
+      border: 1.8px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .pressure-card strong,
+    .domain-worker strong {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .pressure-card small,
+    .domain-worker small {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .pressure-card span {
+      display: block;
+      margin-top: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.4;
+      font-weight: 700;
+    }
+
+    .cpu {
+      border-left: 8px solid var(--red);
+    }
+
+    .poll {
+      border-left: 8px solid var(--blue);
+    }
+
+    .callback {
+      border-left: 8px solid var(--yellow);
+    }
+
+    .query {
+      border-left: 8px solid var(--purple);
+    }
+
+    .region-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .region-pane {
+      border: 2px solid #93c5fd;
+      border-radius: 18px;
+      background: var(--blue-2);
+      padding: 18px;
+    }
+
+    .pod,
+    .db {
+      border: 1.8px solid #f97316;
+      border-radius: 14px;
+      background: #ffedd5;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .db {
+      border-color: var(--blue);
+      background: #dbeafe;
+    }
+
+    .auth-flow {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .auth-flow div {
+      border: 1.5px solid var(--red);
+      border-radius: 12px;
+      background: var(--red-2);
+      color: #7f1d1d;
+      padding: 10px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .mw-box {
+      grid-template-columns: repeat(3, 1fr);
+      margin-bottom: 16px;
+    }
+
+    .mw-box div {
+      border: 1.5px solid var(--blue);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .local-note {
+      border: 1.5px solid var(--green);
+      border-radius: 12px;
+      background: #dcfce7;
+      color: #14532d;
+      padding: 10px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    .cross-grid {
+      grid-template-columns: repeat(2, 1fr);
+      margin-top: 18px;
+    }
+
+    .cross-card {
+      border: 1.8px solid var(--red);
+      border-radius: 14px;
+      background: var(--red-2);
+      color: #991b1b;
+      padding: 15px;
+      text-align: center;
+    }
+
+    .cross-card strong {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .cross-card small {
+      line-height: 1.45;
+    }
+
+    .risk-grid {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 16px;
+    }
+
+    .risk-grid div {
+      border: 1.4px solid #f97316;
+      border-radius: 12px;
+      background: #fff7ed;
+      padding: 12px;
+      text-align: center;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    .target-grid {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 16px;
+    }
+
+    .plan-card {
+      min-height: 140px;
+      border: 1.8px solid var(--green);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .plan-card.primary {
+      border-color: var(--red);
+      background: #fff1f2;
+    }
+
+    .plan-card strong {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .plan-card small {
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      body {
+        padding: 16px;
+      }
+
+      .deployment-grid,
+      .region-row,
+      .business-row,
+      .runtime-row,
+      .debt-grid,
+      .shared-core,
+      .biz-layer,
+      .platform-grid,
+      .pressure-grid,
+      .domain-grid,
+      .region-compare-grid,
+      .cross-grid,
+      .risk-grid,
+      .target-grid,
+      .summary-grid,
+      .flow-row {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step:not(:last-child)::after {
+        content: "↓";
+        top: auto;
+        right: 50%;
+        bottom: -22px;
+        transform: translateX(50%);
+      }
+
+      .api-box,
+      .queue-box,
+      .task-platform-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1 class="page-title">HitPaw Online 后端架构与承载能力评估</h1>
+    <p class="page-subtitle">面向后续流量增长，评估当前架构的技术债务、扩容瓶颈、跨地域风险与平台化方向。</p>
+    <div class="report-meta">
+      <span>汇报版</span>
+      <span>范围：HitPaw Online 后端</span>
+      <span>假设：长期日常流量增长</span>
+    </div>
+
+    <section class="content-section">
+      <h2>0. 评估结论</h2>
+      <p>本次评估关注 HitPaw Online 后端在后续流量增长下的承载能力。评估对象是业务后端与中间件链路，不评价第三方 Provider、内部 AI 服务、账号体系-中台服务本身的产能。</p>
+
+      <div class="summary-grid">
+        <div class="summary-card danger">
+          <strong>技术债务</strong>
+          <ol>
+            <li>HitPaw Online 过去承接了多项业务，相同功能存在多处、多种实现。</li>
+            <li>任务状态、回调、Provider 接入、权益规则等核心逻辑分散。</li>
+            <li>历史兼容逻辑持续沉淀，代码劣化，旧代码不敢改、难下线。</li>
+          </ol>
+        </div>
+        <div class="summary-card warning">
+          <strong>承载能力瓶颈</strong>
+          <ol>
+            <li>核心链路是同步创建任务、异步消费执行，洪峰下主要风险是 MQ 或内部队列积压。</li>
+            <li>不同任务压力模型不同，包括媒体后处理、Provider 轮询、回调峰值、高频状态查询；ffmpeg 类操作会尽量使用计算资源加快处理，资源受限时更可能表现为处理变慢。</li>
+            <li>单纯扩容单体会同时扩 API、Worker、Callback、Cron，无法只扩真正瓶颈，容易造成资源浪费。</li>
+          </ol>
+        </div>
+        <div class="summary-card full warning">
+          <strong>首轮压测观察</strong>
+          <ol>
+            <li>当前测试环境在 Mock 外部服务的前提下，可承接约 <code>250 QPS</code> 的 VEN 创建请求且未出现错误。</li>
+            <li>高并发下尾延迟已明显不稳定，P99 达到秒级，最大耗时超过 <code>8s</code>，说明系统已出现排队或资源争用风险。</li>
+            <li>该结果仅反映测试环境与 Mock 链路下的表现，不能直接代表生产环境真实承载能力，需要继续复测和定位瓶颈。</li>
+          </ol>
+        </div>
+        <div class="summary-card warning">
+          <strong>跨地域风险</strong>
+          <ol>
+            <li>美国为主流量地域，但 MySQL 在新加坡，Auth 等 MySQL 查询存在稳定跨地域访问。</li>
+            <li>每次 Auth 查询 usersession / users 预估超过 400ms，所有依赖 MySQL 的查询都会被放大。</li>
+            <li>该问题影响较大，需要专项讨论数据库地域、读写规划和迁移方案；当前可确认方向是尽量减少稳定跨地域调用。</li>
+          </ol>
+        </div>
+        <div class="summary-card success">
+          <strong>处理原则</strong>
+          <ol>
+            <li>拆分不是目的，模块化单体本身不是核心问题。</li>
+            <li>短中期重点是梳理业务边界、任务边界、队列边界和观测边界。</li>
+            <li>长期沉淀任务平台、Provider 接入、媒体处理、观测成本等可复用能力。</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <div class="part-title">一、当前系统现状</div>
+
+    <section class="content-section">
+      <h2>1.1 业务主链路对比：用户流程不变，内部承载路径改变</h2>
+      <p>从用户和前端视角看，主流程仍然是提交任务、获取 taskId、查询状态、展示结果。变化发生在后端内部：当前由业务单体串联全部环节；治理后由业务入口、任务平台、执行层、文件结果服务分层承接。</p>
+
+      <h3>当前链路：业务单体串联任务全流程</h3>
+
+      <div class="mermaid-box">
+        <pre class="mermaid">
+flowchart LR
+  subgraph CURRENT_BIZ["业务入口"]
+    direction LR
+    C_BIZ["业务方<br/>Online Web / FotorPea / Video Edimaker / 其他业务方"]
+    C_FE["前端<br/>提交任务 / 查询状态"]
+  end
+
+  subgraph CURRENT_BACKEND["HitPaw Online 业务后端单体"]
+    direction TB
+    C_API["同步接口 / 状态查询<br/>鉴权 / 参数校验 / 权益预扣"]
+    C_JOB["任务创建<br/>Redis jobInfo / 幂等"]
+    C_QUEUE["投递队列<br/>RabbitMQ / Redis Queue"]
+    C_WORKER["Worker / Poller / Callback<br/>消费 / 轮询 / 回调更新"]
+    C_IO["执行与文件处理<br/>Provider / 内部 AI / 部分媒体 IO"]
+    C_STATE["状态更新<br/>Redis 主状态 / MySQL 异步持久化"]
+    C_QUERY["状态查询<br/>轮询 / WS"]
+  end
+
+  subgraph CURRENT_DEP["外部与中间件"]
+    direction TB
+    C_ACCOUNT["账号体系-中台"]
+    C_PROVIDER["内部 AI / 第三方 Provider"]
+    C_MW["Redis / RabbitMQ / MySQL / OSS"]
+  end
+
+  C_BIZ --> C_FE
+  C_FE --> C_API --> C_JOB --> C_QUEUE --> C_WORKER --> C_IO --> C_STATE
+  C_STATE --> C_QUERY
+  CURRENT_BACKEND -->|"统一访问"| CURRENT_DEP
+
+  classDef biz fill:#F3E8FF,stroke:#7E22CE,stroke-width:1.4px,color:#111;
+  classDef backend fill:#FFE7C2,stroke:#D88400,stroke-width:1.4px,color:#111;
+  classDef dep fill:#EAF3FF,stroke:#2B7BBB,stroke-width:1.4px,color:#111;
+
+  class CURRENT_BIZ,C_BIZ,C_FE biz;
+  class CURRENT_BACKEND,C_API,C_JOB,C_QUEUE,C_WORKER,C_IO,C_STATE,C_QUERY backend;
+  class CURRENT_DEP,C_ACCOUNT,C_PROVIDER,C_MW dep;
+        </pre>
+      </div>
+      <div class="note-box">当前链路下，每次接入新功能都需要在业务单体内重复实现任务创建、状态推进、回调处理、结果处理等逻辑，重复代码较多；业务需求变更容易侵入流程的多个环节；不同功能历史写法存在差异，后续统一优化和问题排查难度较高。</div>
+
+      <h3>处理后链路：业务入口轻量化，任务执行平台化</h3>
+
+      <div class="mermaid-box">
+        <pre class="mermaid">
+flowchart TB
+  subgraph TARGET_BIZ["业务入口层"]
+    direction LR
+    T_BIZ["业务方<br/>Online Web / FotorPea / Video Edimaker / 其他业务方"]
+    T_FE["前端<br/>提交任务 / 查询状态"]
+  end
+
+  T_GATEWAY["业务 Gateway<br/>用户上下文 / 产品策略 / 参数校验 / 编排聚合"]
+
+  subgraph TARGET_CORE["后端承载层"]
+    direction LR
+
+    subgraph TARGET_PLATFORM["通用任务平台"]
+      direction LR
+      T_TASK["创建任务<br/>幂等 / 状态机 / 任务上下文"]
+      T_ROUTE["队列路由<br/>按任务类型分发"]
+      T_STATUS["状态服务<br/>进度 / 结果 / 失败原因"]
+      T_COMP["补偿治理<br/>超时检查 / 失败回滚 / 状态修复"]
+    end
+
+    subgraph TARGET_EXEC["领域执行层"]
+      direction LR
+      T_PROVIDER["Provider / AI 接入层<br/>第三方 API / 内部 AI / 回调 / 轮询"]
+      T_MEDIA["媒体处理服务<br/>ffmpeg / ffprobe / 后处理"]
+      T_FILE["文件结果服务<br/>OSS 签名 / 文件搬运 / 结果 URL"]
+    end
+  end
+
+  subgraph TARGET_DEP["外部依赖与中间件"]
+    direction LR
+    T_ACCOUNT["账号体系-中台<br/>鉴权 / 权益校验 / 预扣 / 回滚"]
+    T_TASK_MW["任务中间件<br/>Redis / RabbitMQ / MySQL"]
+    T_EXEC_DEP["执行依赖<br/>内部 AI / 第三方 Provider / OSS"]
+  end
+
+  T_BIZ --> T_FE --> T_GATEWAY
+  T_GATEWAY -->|"创建任务 / 查询状态"| TARGET_PLATFORM
+  TARGET_PLATFORM -->|"分发执行"| TARGET_EXEC
+  TARGET_EXEC -->|"进度 / 结果回写"| TARGET_PLATFORM
+
+  T_GATEWAY -->|"鉴权 / 权益"| T_ACCOUNT
+  TARGET_PLATFORM -->|"状态 / 队列 / 持久化"| T_TASK_MW
+  TARGET_EXEC -->|"调用 / 文件结果"| T_EXEC_DEP
+  TARGET_PLATFORM -. "补偿事件" .-> T_GATEWAY
+
+  classDef biz fill:#F3E8FF,stroke:#7E22CE,stroke-width:1.4px,color:#111;
+  classDef core fill:#FAFAFA,stroke:#999,stroke-width:1.2px,color:#111;
+  classDef gateway fill:#FFE7C2,stroke:#D88400,stroke-width:1.4px,color:#111;
+  classDef platform fill:#FFF3CD,stroke:#B7791F,stroke-width:1.4px,color:#111;
+  classDef execute fill:#E8F5E9,stroke:#2E7D32,stroke-width:1.4px,color:#111;
+  classDef dep fill:#EAF3FF,stroke:#2B7BBB,stroke-width:1.4px,color:#111;
+  classDef query fill:#D8ECFF,stroke:#2B7BBB,stroke-width:1.4px,color:#111;
+
+  class TARGET_BIZ,T_BIZ,T_FE biz;
+  class TARGET_CORE core;
+  class T_GATEWAY gateway;
+  class TARGET_PLATFORM,T_TASK,T_ROUTE,T_STATUS,T_COMP platform;
+  class TARGET_EXEC,T_PROVIDER,T_MEDIA,T_FILE execute;
+  class TARGET_DEP,T_ACCOUNT,T_TASK_MW,T_EXEC_DEP dep;
+        </pre>
+      </div>
+      <div class="note-box">对比重点：用户侧流程基本不变；后端内部从“业务单体串联全流程”调整为“业务入口层 + 业务 Gateway + 任务平台 + 领域执行层”。Gateway 负责账号与权益编排，任务平台不直接绑定账号体系，执行层负责 Provider、内部 AI 和文件结果。</div>
+    </section>
+
+    <section class="diagram current">
+      <h2>1.2 部署现状：美国主流量，新加坡备流量</h2>
+      <div class="summary-grid deployment-facts">
+        <div class="summary-card">
+          <strong>部署方式</strong>
+          阿里云 ACK；美国 2 个 Pod、新加坡 2 个 Pod；Cloudflare 负载均衡，美国主、新加坡备。
+        </div>
+        <div class="summary-card">
+          <strong>实例职责</strong>
+          API、回调、队列消费者、Cron 在每个实例都运行，没有按业务或入口做流量隔离。
+        </div>
+        <div class="summary-card">
+          <strong>资源规格</strong>
+          最低 CPU 1000m / Memory 2Gi；最高 CPU 4500m / Memory 10Gi；当前不支持自动扩缩容。
+        </div>
+        <div class="summary-card warning">
+          <strong>中间件地域</strong>
+          MySQL 在新加坡；Redis、RabbitMQ、OSS 在美国；两地 Pod 均存在跨地域访问。
+        </div>
+      </div>
+      <div class="deployment-grid">
+        <div class="external-box">
+          <div class="box-title">外部依赖层</div>
+          <div class="external-stack">
+            <div class="node">账号体系-中台服务</div>
+            <div class="node">内部 AI 服务</div>
+            <div class="node">第三方 API / Provider</div>
+          </div>
+        </div>
+
+        <div class="core-box">
+          <div class="box-title">HitPaw Online 后端承载架构</div>
+          <div class="entry-box">Cloudflare LB<br><small>美国主 / 新加坡备</small></div>
+          <div class="region-row">
+            <div class="region-box">
+              <div class="region-title">新加坡</div>
+              <div class="node app-node">新加坡 K8s<br><small>后端 Pod x2</small></div>
+              <div class="middleware-box">
+                <div class="box-title">中间件</div>
+                <div class="middleware-grid one">
+                  <div class="node">MySQL</div>
+                </div>
+              </div>
+            </div>
+            <div class="region-box">
+              <div class="region-title">美国</div>
+              <div class="node app-node">美国 K8s<br><small>后端 Pod x2</small></div>
+              <div class="middleware-box">
+                <div class="box-title">中间件</div>
+                <div class="middleware-grid">
+                  <div class="node">Redis 集群</div>
+                  <div class="node">RabbitMQ 单节点</div>
+                  <div class="node">OSS</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="cross-note-row">
+            <div class="cross-note">美国 Pod 跨地域访问新加坡 MySQL</div>
+            <div class="cross-note">新加坡 Pod 跨地域访问美国 Redis / RabbitMQ / OSS</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="part-title">二、主要架构问题</div>
+
+    <section class="content-section">
+      <h2>问题总览</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>问题归口</th>
+            <th>当前表现</th>
+            <th>对承载能力的影响</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>历史代码劣化</td>
+            <td>HitPaw Online 过去承接了多项业务，相同功能存在多处、多种实现，兼容逻辑持续沉淀。</td>
+            <td>这不是直接的承载瓶颈，但会让需求变更、问题修复和能力复用变慢；即使不做架构重构，也需要持续治理。</td>
+          </tr>
+          <tr>
+            <td>扩容粒度</td>
+            <td>异步任务压力模型不同，但当前只能整体扩容单体或同一类 Worker。</td>
+            <td>流量增长后只能整体扩容，无法针对队列积压、回调高峰、媒体处理或状态查询分别扩容。</td>
+          </tr>
+          <tr>
+            <td>首轮压测观察</td>
+            <td>测试环境在 Mock 外部服务后，VEN 创建接口约 <code>250 QPS</code> 下错误率为 <code>0%</code>，但 P99 达到秒级，最大耗时超过 <code>8s</code>。</td>
+            <td>说明高并发创建任务场景下已出现排队或资源争用风险；该结果不能直接代表生产环境，需要后续构建更完整的压测基线。</td>
+          </tr>
+          <tr>
+            <td>跨地域访问</td>
+            <td>美国主流量访问新加坡 MySQL；新加坡消费者访问美国 Redis / RabbitMQ / OSS。</td>
+            <td>美国主流量的基础耗时被跨地域 MySQL 放大；方案影响较大，需要专项研究，当前方向是减少稳定跨地域调用。</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="diagram current">
+      <h2>2.1 技术债务：多业务方共用后端，代码劣化持续累积</h2>
+
+      <div class="business-row">
+        <div class="business">
+          <strong>Online Web</strong>
+          <small>主站在线工具</small>
+          <span>高频迭代</span>
+        </div>
+        <div class="business">
+          <strong>FotorPea</strong>
+          <small>AI 绘画 / 图片能力</small>
+          <span>独立需求节奏</span>
+        </div>
+        <div class="business">
+          <strong>Video Edimaker</strong>
+          <small>视频编辑 / AI 视频能力</small>
+          <span>独立需求节奏</span>
+        </div>
+        <div class="business">
+          <strong>其他业务方</strong>
+          <small>外部平台入口</small>
+          <span>需求节奏不同</span>
+        </div>
+      </div>
+
+      <div class="arrow-label">不同业务方需求、接口契约和迭代周期不一致</div>
+      <div class="note-box">这一项本质是迭代过程中的代码劣化问题，不是单独的架构问题，也不是直接的承载能力问题。它放在这里是因为会放大变更风险：即使后续不做架构重构，也需要逐步修复多实现、散落逻辑和旧代码不敢改的问题。</div>
+
+      <div class="backend-box">
+        <div class="backend-title">HitPaw Online Backend 单体服务</div>
+
+        <div class="runtime-row">
+          <div class="runtime">HTTP API</div>
+          <div class="runtime">WebSocket</div>
+          <div class="runtime">Callback</div>
+          <div class="runtime">Worker / Poller</div>
+          <div class="runtime">Cron</div>
+        </div>
+
+        <div class="debt-grid">
+          <div class="debt-block">
+            <div class="debt-title">多业务兼容逻辑</div>
+            <span>历史字段兼容</span>
+            <span>特殊入参 / 返回结构</span>
+            <span>按业务方分支判断</span>
+            <span>旧接口继续复用</span>
+          </div>
+          <div class="debt-block hot">
+            <div class="debt-title">核心逻辑分散</div>
+            <span>任务创建分散</span>
+            <span>状态推进分散</span>
+            <span>回调入口分散</span>
+            <span>Provider 接入分散</span>
+          </div>
+          <div class="debt-block hot">
+            <div class="debt-title">历史代码劣化</div>
+            <span>旧逻辑耦合新需求</span>
+            <span>公共逻辑被多处复用</span>
+            <span>局部补丁持续叠加</span>
+            <span>ai-job-notify 等历史入口难复用</span>
+          </div>
+          <div class="debt-block danger">
+            <div class="debt-title">变更不敢动</div>
+            <span>调用方不完整可见</span>
+            <span>影响范围难评估</span>
+            <span>回归成本高</span>
+            <span>旧代码难以下线</span>
+          </div>
+        </div>
+
+        <div class="shared-core">
+          <div>共享任务状态：jobInfo / Redis 状态</div>
+          <div>共享权益逻辑：预扣 / 回滚 / 免费次数 / 订阅</div>
+          <div>共享外部依赖：CBS / 内部 AI / 第三方 Provider / OSS</div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="diagram current">
+      <h2>2.2 扩容问题：异步任务压力模型不同，单体扩容粒度粗</h2>
+
+      <div class="api-box">
+        <strong>同步接口创建任务</strong>
+        <small>鉴权 / 权益预扣 / 写任务状态 / 投递 MQ / 返回 taskId</small>
+      </div>
+
+      <div class="arrow-label">流量增长后，大量任务进入 MQ 或内部队列</div>
+
+      <div class="queue-box">
+        <strong>RabbitMQ / Redis 队列</strong>
+        <small>任务积压主要发生在异步队列中</small>
+      </div>
+
+      <div class="arrow-label">同一单体 Worker / Poller 承接不同压力模型</div>
+
+      <div class="worker-box">
+        <div class="worker-title">Backend Pod 内部 Worker / Poller</div>
+        <div class="pressure-grid">
+          <div class="pressure-card cpu">
+            <strong>媒体计算 / 后处理型</strong>
+            <small>ffmpeg / ffprobe / 转码 / 合成 / 剪切 / 混音</small>
+            <span>ffmpeg 倾向于尽可能使用更多计算资源加快处理；并发升高时不一定直接打爆 CPU limit，也可能表现为单任务处理速度变慢、队列恢复时间变长。</span>
+          </div>
+          <div class="pressure-card poll">
+            <strong>Provider 轮询 / 搬运型</strong>
+            <small>轮询第三方结果 / 下载上传结果文件 / 状态推进</small>
+            <span>示例：AI 视频生成、图片生成、音乐生成</span>
+          </div>
+          <div class="pressure-card callback">
+            <strong>内部服务回调型</strong>
+            <small>接收回调 / 幂等 / 状态竞争 / Redis & MySQL 更新</small>
+            <span>示例：视频增强、图片增强、换脸、去水印等回调链路</span>
+          </div>
+          <div class="pressure-card query">
+            <strong>高频状态查询型</strong>
+            <small>轮询 / WS / 历史列表 / 任务状态读取</small>
+            <span>压力点：Redis QPS、热点 key、连接数、跨地域 MySQL 查询</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="diagram current">
+      <h2>2.3 跨地域问题：主流量与数据库跨地域，基础耗时偏高</h2>
+
+      <div class="entry-box">Cloudflare LB<br><small>美国主 / 新加坡备</small></div>
+
+      <div class="arrow-label">美国主流量，新加坡备流量；两地 Pod 都运行 API / Consumer / Cron / Callback</div>
+
+      <div class="region-compare-grid">
+        <div class="region-pane">
+          <div class="region-title">美国地域</div>
+          <div class="pod">
+            <strong>美国 K8s 后端 Pod x2</strong>
+            <small>API / Callback / Consumer / Cron</small>
+          </div>
+          <div class="auth-flow">
+            <div>用户请求</div>
+            <div>Auth 鉴权</div>
+            <div>UserAndAuthorization</div>
+          </div>
+          <div class="mw-box">
+            <div>Redis 集群</div>
+            <div>RabbitMQ 单节点</div>
+            <div>OSS</div>
+          </div>
+          <div class="local-note">美国 Pod 本地域访问 Redis / RabbitMQ / OSS</div>
+        </div>
+
+        <div class="region-pane">
+          <div class="region-title">新加坡地域</div>
+          <div class="pod">
+            <strong>新加坡 K8s 后端 Pod x2</strong>
+            <small>API / Callback / Consumer / Cron</small>
+          </div>
+          <div class="auth-flow">
+            <div>用户请求</div>
+            <div>Auth 鉴权</div>
+            <div>UserAndAuthorization</div>
+          </div>
+          <div class="db">
+            <strong>MySQL</strong>
+            <small>usersession / users / 持久化数据</small>
+          </div>
+          <div class="local-note">新加坡 Pod 本地域访问 MySQL</div>
+        </div>
+      </div>
+
+      <div class="cross-grid">
+        <div class="cross-card">
+          <strong>美国 Pod → 新加坡 MySQL</strong>
+          <small>主流量下 Auth 和所有 MySQL 查询产生跨地域访问，单次查询预估超过 400ms。</small>
+        </div>
+        <div class="cross-card">
+          <strong>新加坡 Consumer → 美国 Redis / RabbitMQ / OSS</strong>
+          <small>新加坡异步任务消费、状态读写、队列消费、文件访问会跨地域访问美国中间件。</small>
+        </div>
+      </div>
+
+      <div class="note-box">跨地域治理不能简单理解为“把某个中间件搬到某地”。数据库迁移、同地域读写、只读库、缓存层和主备流量策略都会互相影响，需要进一步方案研究；当前可以确定的是：主链路应尽量减少稳定跨地域调用，并补齐地域维度耗时观测。</div>
+
+      <div class="risk-grid">
+        <div>所有依赖 MySQL 的美国主流量请求天然变慢</div>
+        <div>新加坡消费者处理任务时依赖美国队列和任务状态</div>
+        <div>扩容 Pod 会增加跨地域连接数，不能降低单次访问耗时</div>
+        <div>慢查询和任务延迟可能来自跨地域网络，而不只是 SQL 或业务逻辑</div>
+      </div>
+    </section>
+
+    <div class="part-title">三、处理路径</div>
+
+    <section class="diagram target">
+      <h2>3.1 业务入口治理：业务入口分开，平台能力复用</h2>
+
+      <div class="business-row">
+        <div class="business">
+          <strong>Online Web</strong>
+          <small>主站在线工具</small>
+          <span>独立业务入口</span>
+        </div>
+        <div class="business">
+          <strong>FotorPea</strong>
+          <small>AI 绘画 / 图片能力</small>
+          <span>独立业务入口</span>
+        </div>
+        <div class="business">
+          <strong>Video Edimaker</strong>
+          <small>视频编辑 / AI 视频能力</small>
+          <span>独立业务入口</span>
+        </div>
+        <div class="business">
+          <strong>其他业务方</strong>
+          <small>非主站业务入口</small>
+          <span>统一入口适配</span>
+        </div>
+      </div>
+
+      <div class="arrow-label">业务方只保留自身差异：页面契约 / 产品策略 / 权益入口 / 展示逻辑</div>
+
+      <div class="biz-layer">
+        <div class="biz-service">
+          <strong>Online Backend</strong>
+          <small>业务入口 / 用户上下文 / 产品策略</small>
+        </div>
+        <div class="biz-service">
+          <strong>FotorPea Backend</strong>
+          <small>业务入口 / 产品策略</small>
+        </div>
+        <div class="biz-service">
+          <strong>Video Edimaker Backend</strong>
+          <small>业务入口 / 产品策略</small>
+        </div>
+        <div class="biz-service">
+          <strong>Other Business Adapter</strong>
+          <small>其他业务方入口适配</small>
+        </div>
+      </div>
+
+      <div class="arrow-label">通过稳定契约调用通用平台能力，而不是复用单体内部代码</div>
+
+      <div class="platform-box">
+        <div class="platform-title">通用平台能力层</div>
+        <div class="platform-grid">
+          <div class="platform-card task">
+            <div class="card-title">任务平台</div>
+            <span>统一任务模型</span>
+            <span>状态机</span>
+            <span>队列 / 进度</span>
+            <span>回调 / 轮询</span>
+            <span>补偿 / 幂等</span>
+          </div>
+          <div class="platform-card provider">
+            <div class="card-title">统一 Provider / AI 接入</div>
+            <span>第三方 API</span>
+            <span>内部 AI 服务</span>
+            <span>限流 / 重试</span>
+            <span>Fallback</span>
+            <span>调用日志 / 成本基础数据</span>
+          </div>
+          <div class="platform-card file">
+            <div class="card-title">文件与结果服务</div>
+            <span>OSS 签名</span>
+            <span>文件搬运</span>
+            <span>结果链接</span>
+            <span>生命周期</span>
+          </div>
+          <div class="platform-card obs">
+            <div class="card-title">观测与成本</div>
+            <span>Metrics</span>
+            <span>Logs</span>
+            <span>Tracing</span>
+            <span>成本归因</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="diagram target">
+      <h2>3.2 异步任务治理：按领域任务拆分队列 / Worker，按瓶颈扩容</h2>
+
+      <div class="api-box target-api">
+        <strong>业务后端</strong>
+        <small>同步创建任务 / 鉴权 / 权益入口 / 返回 taskId</small>
+      </div>
+
+      <div class="arrow-label">统一任务平台路由任务，沉淀状态、幂等、补偿、观测</div>
+
+      <div class="task-platform-box">
+        <strong>任务平台</strong>
+        <small>统一任务模型 / 状态机 / 队列路由 / 进度查询 / 失败补偿 / 积压监控</small>
+      </div>
+
+      <div class="arrow-label">不同任务进入不同领域 Worker，可按压力模型独立扩容</div>
+
+      <div class="domain-grid">
+        <div class="domain-worker cpu">
+          <strong>media-processing-worker</strong>
+          <small>ffmpeg / ffprobe / 文件后处理</small>
+        </div>
+        <div class="domain-worker poll">
+          <strong>video-generate-worker</strong>
+          <small>Provider 轮询 / 结果搬运 / 必要后处理</small>
+        </div>
+        <div class="domain-worker poll">
+          <strong>image-generate-worker</strong>
+          <small>Provider 轮询 / 状态推进</small>
+        </div>
+        <div class="domain-worker poll">
+          <strong>music-generate-worker</strong>
+          <small>Provider 轮询 / 音频结果处理</small>
+        </div>
+        <div class="domain-worker callback">
+          <strong>enhance-worker</strong>
+          <small>视频增强 / 图片增强回调链路</small>
+        </div>
+        <div class="domain-worker callback">
+          <strong>face-watermark-worker</strong>
+          <small>换脸 / 去水印回调链路</small>
+        </div>
+      </div>
+
+      <div class="note-box">后续需要将压测常态化：按创建任务、状态查询、回调高峰、队列积压恢复、文件 IO 等场景分别压测，形成服务承载基线。每轮压测需要同步采集 API P95/P99、RabbitMQ 积压、Redis/MySQL 指标、Pod CPU/Memory/GC/连接数，以定位真正瓶颈，再决定扩容、隔离或架构治理动作。</div>
+
+    </section>
+
+    <section class="diagram target">
+      <h2>3.3 跨地域治理：减少稳定跨地域调用，数据库方案需专项研究</h2>
+
+      <div class="target-grid">
+        <div class="plan-card primary">
+          <strong>数据库地域治理</strong>
+          <small>结合美国主流量策略，专项评估 MySQL 迁移到美国、同地域读写规划或其他减少跨地域查询的方案。</small>
+        </div>
+        <div class="plan-card primary">
+          <strong>队列与任务状态地域治理</strong>
+          <small>评估 Redis / RabbitMQ / OSS 与消费者部署地域的一致性，减少备地域消费者稳定跨地域消费。</small>
+        </div>
+        <div class="plan-card">
+          <strong>消费者部署策略</strong>
+          <small>明确美国主、新加坡备场景下是否两地都需要运行 Consumer；必要时按地域开关控制消费者。</small>
+        </div>
+        <div class="plan-card">
+          <strong>跨地域观测</strong>
+          <small>补充 Auth 查询、MySQL 查询、Redis / MQ / OSS 访问的地域维度耗时指标。</small>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: "loose",
+      theme: "default",
+      flowchart: {
+        curve: "basis",
+        htmlLabels: true
+      }
+    });
+  </script>
+</body>
+</html>
