@@ -6,3 +6,4 @@
 
 [兼职项目经理的 4 个实战难题文字分享](https://shiyao1122.github.io/awesome-good-idea/pm_roundtable_share_script_20260402.md)
 
+[ChatGPT页面自动化说明书案例](https://shiyao1122.github.io/awesome-good-idea/ChatGPT页面自动化说明书案例.md)
