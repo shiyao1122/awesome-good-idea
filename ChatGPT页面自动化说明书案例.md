@@ -273,41 +273,7 @@ outputs/
 - `qa.jsonl`：记录断点续跑状态
 - `qa.md`：给人阅读和归档
 
-## 8. Markdown 是否可以配图
-
-可以。Markdown 支持图片，格式如下：
-
-```md
-![图片说明](图片路径)
-```
-
-例如本地图片可以这样写：
-
-```md
-![ChatGPT 正在回答问题](D:/Users/Documents/WXWork/1688849966097673/Cache/Image/2026-06/企业微信截图_17802954458548.png)
-```
-
-如果图片路径里有空格，建议用尖括号包起来：
-
-```md
-![截图](<D:/Users/Documents/New project 3/assets/screenshot 01.png>)
-```
-
-为了长期保存，最好不要直接引用微信缓存或临时目录中的截图。更稳妥的做法是把截图复制到项目目录，例如：
-
-```text
-D:\Users\Documents\New project 3\assets\screenshots\
-```
-
-然后在 Markdown 中使用相对路径：
-
-```md
-![步骤 1：输入问题](assets/screenshots/step-01-input.png)
-```
-
-这样以后移动整个项目文件夹时，图片也不容易丢。
-
-## 9. 注意事项
+## 8. 注意事项
 
 使用页面自动化时需要注意：
 
@@ -318,6 +284,8 @@ D:\Users\Documents\New project 3\assets\screenshots\
 - 大批量任务建议每完成一条就立即保存，避免中途失败导致结果丢失
 - 多组问题建议新开多个对话，避免不同主题之间互相影响
 - 配图文档建议把图片放到项目目录，不要长期依赖微信缓存或临时目录
+
+## 9. SKILL https://github.com/shiyao1122/awesome-good-idea/blob/main/chatgpt-page-batch-qa-SKILL.md 
 
 ## 10. 一句话总结
 
