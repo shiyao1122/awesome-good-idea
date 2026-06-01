@@ -95,7 +95,7 @@ Codex 会先确认浏览器中是否存在该页面。如果页面已经打开�
 
 示例截图：
 
-![ChatGPT 页面中输入性价比问题](https://github.com/shiyao1122/awesome-good-idea/blob/main/assets/企业微信截图_17802952966023.png)
+![ChatGPT 页面中输入性价比问题](/assets/企业微信截图_17802952966023.png)
 
 ### 步骤 2：定位输入框并输入问题
 
@@ -121,7 +121,7 @@ Codex 会在页面底部找到 ChatGPT 的输入框，并将用户指定的问�
 
 示例截图：
 
-![ChatGPT 正在回答 DVD 视频问题](https://github.com/shiyao1122/awesome-good-idea/blob/main/assets/企业微信截图_17802954458548.png)
+![ChatGPT 正在回答 DVD 视频问题](/assets/企业微信截图_17802954458548.png)
 
 ### 步骤 4：等待回答完成
 
@@ -148,7 +148,7 @@ DVD视频可以用吗？
 
 示例截图：
 
-![DVD 视频问题回答完成](https://github.com/shiyao1122/awesome-good-idea/blob/main/assets/企业微信截图_1780295614861.png)
+![DVD 视频问题回答完成](/assets/企业微信截图_1780295614861.png)
 
 ### 步骤 6：保存问答记录
 
