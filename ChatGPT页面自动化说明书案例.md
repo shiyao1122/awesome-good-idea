@@ -285,7 +285,9 @@ outputs/
 - 多组问题建议新开多个对话，避免不同主题之间互相影响
 - 配图文档建议把图片放到项目目录，不要长期依赖微信缓存或临时目录
 
-## 9. SKILL https://github.com/shiyao1122/awesome-good-idea/blob/main/chatgpt-page-batch-qa-SKILL.md 
+## 9. SKILL
+
+https://github.com/shiyao1122/awesome-good-idea/blob/main/chatgpt-page-batch-qa-SKILL.md 
 
 ## 10. 一句话总结
 
