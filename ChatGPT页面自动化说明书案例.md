@@ -111,7 +111,7 @@ Codex 会在页面底部找到 ChatGPT 的输入框，并将用户指定的问�
 
 示例截图：
 
-![Codex 确认已在输入框中输入问题](https://github.com/shiyao1122/awesome-good-idea/blob/main/assets/企业微信截图_1780295319255.png)
+![Codex 确认已在输入框中输入问题](/assets/企业微信截图_1780295319255.png)
 
 ### 步骤 3：点击发送
 
